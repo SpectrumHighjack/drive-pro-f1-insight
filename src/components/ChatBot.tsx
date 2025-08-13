@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAppStore } from '@/store/useAppStore';
+import { callSophia } from '@/lib/ai';
 
 export function ChatBot() {
   const { 
@@ -35,8 +36,21 @@ export function ChatBot() {
 
     setIsLoading(true);
 
-    // Simulate AI response (replace with actual ChatGPT integration)
-    setTimeout(() => {
+    try {
+      const assistantText = await callSophia({
+        message: userMessage,
+        history: currentHistory.map((m) => ({
+          role: m.role as 'user' | 'assistant',
+          content: m.content,
+        })),
+        widget: activeWidget,
+      });
+
+      addChatMessage({
+        content: assistantText,
+        role: 'assistant',
+      });
+    } catch (error) {
       const responses = [
         'Olá! Sou a Sophia, sua assistente DriverPro. Como posso ajudar com a análise dos seus dados?',
         'Baseado nos dados do widget atual, posso calcular métricas específicas. O que você gostaria de saber?',
@@ -44,16 +58,11 @@ export function ChatBot() {
         'Para otimizar seus ganhos, recomendo focar nas zonas de alta demanda entre 7h-9h e 17h-19h.',
         'Posso gerar um relatório detalhado dos seus dados financeiros. Que período você gostaria de analisar?',
       ];
-      
       const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-      
-      addChatMessage({
-        content: randomResponse,
-        role: 'assistant',
-      });
-      
+      addChatMessage({ content: randomResponse, role: 'assistant' });
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
