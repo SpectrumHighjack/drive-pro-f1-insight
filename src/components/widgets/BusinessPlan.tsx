@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Calculator, Download, Save, FileSpreadsheet } from 'lucide-react';
+import jsPDF from 'jspdf';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -43,16 +44,38 @@ export function BusinessPlan() {
 
   const handleSave = () => {
     localStorage.setItem('driverpro-business-plan', JSON.stringify(formData));
-    // Add toast notification here
+    // TODO: adicionar toast de sucesso
   };
 
-  const handleExportCSV = () => {
+  const handleExportPDF = () => {
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+    const line = (y: number, label: string, value: string) => {
+      doc.text(`${label}: ${value}`, 40, y);
+    };
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(18);
+    doc.text('DriverPro Analytics — Business Plan', 40, 48);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(12);
+
+    let y = 84;
+    line(y, 'Viagens por Dia', String(calculations.tripsPerDay)); y += 18;
+    line(y, 'Dias Trabalhados/Mês', calculations.workingDaysPerMonth.toFixed(1)); y += 18;
+    line(y, 'Receita Bruta Mensal', `€ ${calculations.grossMonthlyRevenue.toFixed(2)}`); y += 18;
+    line(y, 'Custo Combustível/Mês', `€ ${calculations.fuelCostPerMonth.toFixed(2)}`); y += 18;
+    line(y, 'Custos Totais/Mês', `€ ${calculations.totalMonthlyCosts.toFixed(2)}`); y += 18;
+    line(y, 'Lucro Líquido Mensal', `€ ${calculations.netMonthlyIncome.toFixed(2)}`); y += 18;
+    line(y, 'Projeção Anual', `€ ${calculations.annualProjection.toFixed(2)}`);
+
+    doc.save('business-plan-driverpro.pdf');
+  };
     const csvData = [
       ['Métrica', 'Valor'],
-      ['Receita Bruta Mensal', `R$ ${calculations.grossMonthlyRevenue.toFixed(2)}`],
-      ['Custos Totais Mensais', `R$ ${calculations.totalMonthlyCosts.toFixed(2)}`],
-      ['Lucro Líquido Mensal', `R$ ${calculations.netMonthlyIncome.toFixed(2)}`],
-      ['Projeção Anual', `R$ ${calculations.annualProjection.toFixed(2)}`],
+      ['Receita Bruta Mensal', `€ ${calculations.grossMonthlyRevenue.toFixed(2)}`],
+      ['Custos Totais Mensais', `€ ${calculations.totalMonthlyCosts.toFixed(2)}`],
+      ['Lucro Líquido Mensal', `€ ${calculations.netMonthlyIncome.toFixed(2)}`],
+      ['Projeção Anual', `€ ${calculations.annualProjection.toFixed(2)}`],
     ];
     
     const csvContent = csvData.map(row => row.join(',')).join('\n');
@@ -109,7 +132,7 @@ export function BusinessPlan() {
             </div>
 
             <div>
-              <Label htmlFor="avgTripValue">Valor Médio por Viagem (R$)</Label>
+              <Label htmlFor="avgTripValue">Valor Médio por Viagem (€)</Label>
               <Input
                 id="avgTripValue"
                 type="number"
@@ -122,7 +145,7 @@ export function BusinessPlan() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="fuelCostPerLiter">Combustível (R$/L)</Label>
+                <Label htmlFor="fuelCostPerLiter">Combustível (€/L)</Label>
                 <Input
                   id="fuelCostPerLiter"
                   type="number"
@@ -146,7 +169,7 @@ export function BusinessPlan() {
             </div>
 
             <div>
-              <Label htmlFor="maintenanceCost">Manutenção Mensal (R$)</Label>
+              <Label htmlFor="maintenanceCost">Manutenção Mensal (€)</Label>
               <Input
                 id="maintenanceCost"
                 type="number"
@@ -157,7 +180,7 @@ export function BusinessPlan() {
             </div>
 
             <div>
-              <Label htmlFor="insuranceCost">Seguro Anual (R$)</Label>
+              <Label htmlFor="insuranceCost">Seguro Anual (€)</Label>
               <Input
                 id="insuranceCost"
                 type="number"
@@ -168,7 +191,7 @@ export function BusinessPlan() {
             </div>
 
             <div>
-              <Label htmlFor="carPayment">Financiamento Mensal (R$)</Label>
+              <Label htmlFor="carPayment">Financiamento Mensal (€)</Label>
               <Input
                 id="carPayment"
                 type="number"
@@ -193,11 +216,11 @@ export function BusinessPlan() {
               {[
                 { label: 'Viagens por Dia', value: calculations.tripsPerDay },
                 { label: 'Dias Trabalhados/Mês', value: calculations.workingDaysPerMonth.toFixed(1) },
-                { label: 'Receita Bruta Mensal', value: `R$ ${calculations.grossMonthlyRevenue.toFixed(2)}`, highlight: true },
-                { label: 'Custo Combustível/Mês', value: `R$ ${calculations.fuelCostPerMonth.toFixed(2)}` },
-                { label: 'Custos Totais/Mês', value: `R$ ${calculations.totalMonthlyCosts.toFixed(2)}` },
-                { label: 'Lucro Líquido Mensal', value: `R$ ${calculations.netMonthlyIncome.toFixed(2)}`, highlight: true },
-                { label: 'Projeção Anual', value: `R$ ${calculations.annualProjection.toFixed(2)}`, highlight: true },
+                { label: 'Receita Bruta Mensal', value: `€ ${calculations.grossMonthlyRevenue.toFixed(2)}`, highlight: true },
+                { label: 'Custo Combustível/Mês', value: `€ ${calculations.fuelCostPerMonth.toFixed(2)}` },
+                { label: 'Custos Totais/Mês', value: `€ ${calculations.totalMonthlyCosts.toFixed(2)}` },
+                { label: 'Lucro Líquido Mensal', value: `€ ${calculations.netMonthlyIncome.toFixed(2)}`, highlight: true },
+                { label: 'Projeção Anual', value: `€ ${calculations.annualProjection.toFixed(2)}`, highlight: true },
               ].map((item, index) => (
                 <div 
                   key={index} 
@@ -238,9 +261,9 @@ export function BusinessPlan() {
                   CSV
                 </Button>
                 <Button 
+                  onClick={handleExportPDF}
                   variant="outline" 
                   size="sm"
-                  disabled
                 >
                   <Download className="h-4 w-4 mr-2" />
                   PDF

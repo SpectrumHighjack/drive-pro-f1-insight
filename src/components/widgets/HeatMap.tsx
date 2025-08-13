@@ -1,6 +1,7 @@
 import React from 'react';
-import { Map, MapPin, AlertTriangle, Navigation } from 'lucide-react';
+import { MapPin, AlertTriangle, Navigation } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { OfflineMap } from '@/components/OfflineMap';
 
 export function HeatMap() {
   return (
@@ -10,7 +11,7 @@ export function HeatMap() {
           HeatMap em Tempo Real
         </h2>
         <p className="text-muted-foreground">
-          Zonas de demanda e incidentes via Google Maps
+          Mapa offline interativo, sem APIs ou chaves externas
         </p>
       </div>
 
@@ -18,7 +19,7 @@ export function HeatMap() {
       <Card className="bg-gradient-card border-border shadow-card">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 font-orbitron">
-            <Map className="h-5 w-5 text-primary" />
+            <Navigation className="h-5 w-5 text-primary" />
             Mapa Interativo
           </CardTitle>
         </CardHeader>
