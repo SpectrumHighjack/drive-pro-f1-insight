@@ -24,33 +24,7 @@ export function HeatMap() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="h-96 bg-muted/20 rounded-lg flex items-center justify-center border border-border relative">
-            <div className="text-center">
-              <Map className="h-16 w-16 text-primary mx-auto mb-4" />
-              <p className="text-muted-foreground mb-2">
-                Integração com Google Maps em desenvolvimento
-              </p>
-              <p className="text-xs text-muted-foreground">
-                API key necessária para ativação
-              </p>
-            </div>
-            
-            {/* Mock indicators */}
-            <div className="absolute top-4 left-4 space-y-2">
-              <div className="flex items-center gap-2 bg-red-500/20 p-2 rounded border border-red-500/50">
-                <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse" />
-                <span className="text-xs text-red-200">Alta Demanda</span>
-              </div>
-              <div className="flex items-center gap-2 bg-yellow-500/20 p-2 rounded border border-yellow-500/50">
-                <div className="w-3 h-3 bg-yellow-500 rounded-full animate-pulse" />
-                <span className="text-xs text-yellow-200">Média Demanda</span>
-              </div>
-              <div className="flex items-center gap-2 bg-green-500/20 p-2 rounded border border-green-500/50">
-                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
-                <span className="text-xs text-green-200">Baixa Demanda</span>
-              </div>
-            </div>
-          </div>
+          <OfflineMap />
         </CardContent>
       </Card>
 
