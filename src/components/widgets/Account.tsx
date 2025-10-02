@@ -31,22 +31,12 @@ export function Account() {
 
   const accountSections = [
     {
-      title: 'Perfil do Usuário',
-      icon: User,
-      items: [
-        { label: 'Nome', value: 'João Silva' },
-        { label: 'Email', value: 'joao.silva@email.com' },
-        { label: 'Telefone', value: '+55 11 99999-9999' },
-        { label: 'Equipe F1', value: currentTeam?.displayName || 'Não selecionada' },
-      ]
-    },
-    {
       title: 'Configurações',
       icon: Settings,
       items: [
-        { label: 'Idioma', value: 'Português (BR)' },
-        { label: 'Fuso Horário', value: 'GMT-3 (Brasília)' },
-        { label: 'Moeda', value: 'Real (BRL)' },
+        { label: 'Idioma', value: 'Português (PT)' },
+        { label: 'Fuso Horário', value: 'GMT+0 (Lisboa)' },
+        { label: 'Moeda', value: 'Euro (EUR)' },
         { label: 'Tema', value: currentTeam?.displayName || 'Padrão' },
       ]
     },
@@ -85,40 +75,85 @@ export function Account() {
 
       {/* Profile Header */}
       <Card className="bg-gradient-card border-border shadow-card">
-        <CardContent className="p-6">
+        <CardContent className="pt-6">
           <div className="flex items-center gap-6">
-            <div 
-              className="w-20 h-20 rounded-full shadow-racing flex items-center justify-center text-3xl font-bold"
-              style={{
-                background: currentTeam 
-                  ? `linear-gradient(135deg, hsl(${currentTeam.colors.primary}), hsl(${currentTeam.colors.accent}))` 
-                  : 'var(--gradient-primary)'
-              }}
-            >
-              🏎️
+            <div className="h-24 w-24 rounded-full bg-gradient-racing flex items-center justify-center shadow-glow">
+              <User className="h-12 w-12 text-primary-foreground" />
             </div>
             <div className="flex-1">
-              <h3 className="text-2xl font-orbitron font-bold text-foreground mb-2">
-                João Silva
+              <h3 className="text-2xl font-orbitron font-bold mb-1">
+                {profile.name}
               </h3>
-              <p className="text-muted-foreground mb-2">
-                Piloto {currentTeam?.displayName || 'DriverPro'}
-              </p>
-              <div className="flex items-center gap-4 text-sm">
-                <span className="text-green-500">● Online</span>
-                <span className="text-muted-foreground">Membro desde Jan 2024</span>
+              <p className="text-muted-foreground mb-2">Piloto • {currentTeam?.name}</p>
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setIsEditing(!isEditing)}
+                >
+                  <Edit className="h-4 w-4 mr-2" />
+                  {isEditing ? 'Cancelar' : 'Editar Perfil'}
+                </Button>
+                {isEditing && (
+                  <Button size="sm" onClick={handleSave}>
+                    <Shield className="h-4 w-4 mr-2" />
+                    Guardar
+                  </Button>
+                )}
               </div>
             </div>
-            <Button variant="outline">
-              <Settings className="h-4 w-4 mr-2" />
-              Editar Perfil
-            </Button>
           </div>
         </CardContent>
       </Card>
 
+      {/* Editable Profile Fields */}
+      {isEditing && (
+        <Card className="bg-gradient-card border-border shadow-card">
+          <CardHeader>
+            <CardTitle className="font-orbitron">Editar Informações</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Nome</Label>
+                <Input 
+                  id="name"
+                  value={profile.name}
+                  onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input 
+                  id="email"
+                  type="email"
+                  value={profile.email}
+                  onChange={(e) => setProfile({ ...profile, email: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="phone">Telefone</Label>
+                <Input 
+                  id="phone"
+                  value={profile.phone}
+                  onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="license">Licença</Label>
+                <Input 
+                  id="license"
+                  value={profile.license}
+                  disabled
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Account Sections */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {accountSections.map((section, index) => {
           const Icon = section.icon;
           
@@ -153,7 +188,7 @@ export function Account() {
           { label: 'Backup', icon: Shield, variant: 'outline' as const },
           { label: 'Sair', icon: LogOut, variant: 'destructive' as const },
         ].map((action, index) => {
-          const Icon = action.icon;
+          const ActionIcon = action.icon;
           
           return (
             <Button
@@ -161,7 +196,7 @@ export function Account() {
               variant={action.variant}
               className="h-16 flex-col gap-2"
             >
-              <Icon className="h-5 w-5" />
+              <ActionIcon className="h-5 w-5" />
               <span className="text-xs">{action.label}</span>
             </Button>
           );
@@ -179,7 +214,7 @@ export function Account() {
               { label: 'Dias Ativos', value: '127' },
               { label: 'Logins Totais', value: '342' },
               { label: 'Widgets Usados', value: '6/6' },
-              { label: 'Equipes Testadas', value: '3' },
+              { label: 'Equipes Testadas', value: '6' },
             ].map((stat, index) => (
               <div key={index} className="text-center p-3 bg-muted/10 rounded-lg border border-border">
                 <div className="text-2xl font-orbitron font-bold text-primary mb-1">
