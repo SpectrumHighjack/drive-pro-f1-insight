@@ -1,13 +1,33 @@
-import React from 'react';
-import { User, Settings, Bell, Shield, CreditCard, LogOut } from 'lucide-react';
+import React, { useState } from 'react';
+import { User, Settings, Bell, Shield, CreditCard, LogOut, Edit } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 import { useAppStore } from '@/store/useAppStore';
 import { F1_TEAMS } from '@/data/teams';
 
 export function Account() {
   const { selectedTeam } = useAppStore();
   const currentTeam = F1_TEAMS.find(team => team.id === selectedTeam);
+  const { toast } = useToast();
+  
+  const [isEditing, setIsEditing] = useState(false);
+  const [profile, setProfile] = useState({
+    name: currentTeam?.displayName || 'Piloto',
+    email: 'piloto@driverpro.com',
+    phone: '+351 912 345 678',
+    license: 'PT-2024-' + Math.random().toString(36).substr(2, 6).toUpperCase(),
+  });
+
+  const handleSave = () => {
+    setIsEditing(false);
+    toast({
+      title: "Perfil atualizado",
+      description: "As suas informações foram guardadas com sucesso.",
+    });
+  };
 
   const accountSections = [
     {

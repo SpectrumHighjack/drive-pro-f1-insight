@@ -1,12 +1,24 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { TrendingUp, DollarSign, Users, MapPin, Clock, Zap } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAppStore } from '@/store/useAppStore';
 import { F1_TEAMS } from '@/data/teams';
+import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export function Dashboard() {
   const { selectedTeam } = useAppStore();
   const currentTeam = F1_TEAMS.find(team => team.id === selectedTeam);
+
+  // Dados de performance semanal
+  const weeklyData = useMemo(() => [
+    { day: 'Seg', receita: 2400, viagens: 38, eficiencia: 92 },
+    { day: 'Ter', receita: 2847, viagens: 42, eficiencia: 94 },
+    { day: 'Qua', receita: 2650, viagens: 40, eficiencia: 91 },
+    { day: 'Qui', receita: 3100, viagens: 47, eficiencia: 96 },
+    { day: 'Sex', receita: 3450, viagens: 52, eficiencia: 95 },
+    { day: 'Sáb', receita: 4200, viagens: 61, eficiencia: 97 },
+    { day: 'Dom', receita: 3800, viagens: 55, eficiencia: 93 },
+  ], []);
 
   const metrics = [
     {
@@ -94,22 +106,89 @@ export function Dashboard() {
         })}
       </div>
 
-      {/* Performance Chart Placeholder */}
-      <Card className="bg-gradient-card border-border shadow-card">
-        <CardHeader>
-          <CardTitle className="font-orbitron">Performance Semanal</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-64 bg-muted/20 rounded-lg flex items-center justify-center border border-border">
-            <div className="text-center">
-              <TrendingUp className="h-12 w-12 text-primary mx-auto mb-2" />
-              <p className="text-muted-foreground">
-                Gráfico de performance será implementado
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Performance Chart */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card className="bg-gradient-card border-border shadow-card">
+          <CardHeader>
+            <CardTitle className="font-orbitron">Receita Semanal</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={250}>
+              <AreaChart data={weeklyData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis 
+                  dataKey="day" 
+                  stroke="hsl(var(--muted-foreground))"
+                  style={{ fontSize: '12px' }}
+                />
+                <YAxis 
+                  stroke="hsl(var(--muted-foreground))"
+                  style={{ fontSize: '12px' }}
+                />
+                <Tooltip 
+                  contentStyle={{
+                    backgroundColor: 'hsl(var(--card))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '8px',
+                    color: 'hsl(var(--foreground))'
+                  }}
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="receita" 
+                  stroke="hsl(var(--primary))" 
+                  fill="hsl(var(--primary) / 0.2)"
+                  strokeWidth={2}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-card border-border shadow-card">
+          <CardHeader>
+            <CardTitle className="font-orbitron">Eficiência & Viagens</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={250}>
+              <LineChart data={weeklyData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis 
+                  dataKey="day" 
+                  stroke="hsl(var(--muted-foreground))"
+                  style={{ fontSize: '12px' }}
+                />
+                <YAxis 
+                  stroke="hsl(var(--muted-foreground))"
+                  style={{ fontSize: '12px' }}
+                />
+                <Tooltip 
+                  contentStyle={{
+                    backgroundColor: 'hsl(var(--card))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '8px',
+                    color: 'hsl(var(--foreground))'
+                  }}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="viagens" 
+                  stroke="hsl(var(--accent))" 
+                  strokeWidth={2}
+                  name="Viagens"
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="eficiencia" 
+                  stroke="hsl(var(--primary))" 
+                  strokeWidth={2}
+                  name="Eficiência %"
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Quick Actions */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

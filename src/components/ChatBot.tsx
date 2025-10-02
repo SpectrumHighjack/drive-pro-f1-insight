@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { MessageCircle, Send, X, Bot } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -19,8 +19,16 @@ export function ChatBot() {
   
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const currentHistory = chatHistory[activeWidget] || [];
+
+  // Auto-scroll to bottom when new messages arrive
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }
+  }, [currentHistory]);
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || isLoading) return;
@@ -145,6 +153,7 @@ export function ChatBot() {
                     </div>
                   </div>
                 )}
+                <div ref={scrollRef} />
               </div>
             </ScrollArea>
 
@@ -162,7 +171,7 @@ export function ChatBot() {
                 <Button 
                   onClick={handleSendMessage}
                   disabled={!inputMessage.trim() || isLoading}
-                  variant="racing"
+                  variant="default"
                   size="icon"
                 >
                   <Send className="h-4 w-4" />
@@ -176,9 +185,8 @@ export function ChatBot() {
       {/* Floating Chat Button */}
       <Button
         onClick={toggleChat}
-        variant="racing"
         size="icon"
-        className="fixed bottom-6 right-6 z-30 h-14 w-14 rounded-full shadow-glow hover:scale-110 transition-all"
+        className="fixed bottom-6 right-6 z-30 h-14 w-14 rounded-full bg-gradient-racing shadow-glow hover:scale-110 transition-all"
       >
         <MessageCircle className="h-6 w-6" />
       </Button>

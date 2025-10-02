@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calculator, Download, Save, FileSpreadsheet } from 'lucide-react';
 import jsPDF from 'jspdf';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 
 export function BusinessPlan() {
+  const { toast } = useToast();
+  
   const [formData, setFormData] = useState({
     hoursPerDay: 8,
     daysPerWeek: 6,
@@ -17,6 +20,18 @@ export function BusinessPlan() {
     insuranceCost: 2400,
     carPayment: 1200,
   });
+
+  // Load from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem('driverpro-business-plan');
+    if (saved) {
+      try {
+        setFormData(JSON.parse(saved));
+      } catch (e) {
+        console.error('Failed to load saved data:', e);
+      }
+    }
+  }, []);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
@@ -44,7 +59,10 @@ export function BusinessPlan() {
 
   const handleSave = () => {
     localStorage.setItem('driverpro-business-plan', JSON.stringify(formData));
-    // TODO: adicionar toast de sucesso
+    toast({
+      title: "Plano guardado",
+      description: "Os seus dados financeiros foram guardados com sucesso.",
+    });
   };
 
   const handleExportPDF = () => {
