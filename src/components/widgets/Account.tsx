@@ -1,79 +1,66 @@
 import React, { useState } from 'react';
-import { User, Settings, Bell, Shield, CreditCard, LogOut, Edit } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { User, Settings, Bell, Shield, DollarSign, FileText, MessageCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { useAppStore } from '@/store/useAppStore';
 import { F1_TEAMS } from '@/data/teams';
+import { formatCurrency } from '@/lib/currency';
 
 export function Account() {
-  const { selectedTeam } = useAppStore();
+  const { selectedTeam, currency } = useAppStore();
   const currentTeam = F1_TEAMS.find(team => team.id === selectedTeam);
   const { toast } = useToast();
+  const { t } = useTranslation();
   
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState({
-    name: currentTeam?.displayName || 'Piloto',
-    email: 'piloto@driverpro.com',
+    name: currentTeam?.displayName || 'Driver',
+    email: 'driver@driverpro.com',
     phone: '+351 912 345 678',
-    license: 'PT-2024-' + Math.random().toString(36).substr(2, 6).toUpperCase(),
+    license: 'PT-2024-ABC123',
+  });
+
+  const [settings, setSettings] = useState({
+    notifications: true,
+    darkMode: false,
+    autoAccept: false,
   });
 
   const handleSave = () => {
     setIsEditing(false);
     toast({
-      title: "Perfil atualizado",
-      description: "As suas informações foram guardadas com sucesso.",
+      title: t('account.saved'),
+      description: t('account.saved'),
     });
   };
 
-  const accountSections = [
-    {
-      title: 'Configurações',
-      icon: Settings,
-      items: [
-        { label: 'Idioma', value: 'Português (PT)' },
-        { label: 'Fuso Horário', value: 'GMT+0 (Lisboa)' },
-        { label: 'Moeda', value: 'Euro (EUR)' },
-        { label: 'Tema', value: currentTeam?.displayName || 'Padrão' },
-      ]
-    },
-    {
-      title: 'Notificações',
-      icon: Bell,
-      items: [
-        { label: 'Push Notifications', value: 'Ativado' },
-        { label: 'Email Marketing', value: 'Desativado' },
-        { label: 'Alertas de Tráfego', value: 'Ativado' },
-        { label: 'Relatórios Semanais', value: 'Ativado' },
-      ]
-    },
-    {
-      title: 'Segurança',
-      icon: Shield,
-      items: [
-        { label: 'Autenticação 2FA', value: 'Ativada' },
-        { label: 'Login Biométrico', value: 'Configurado' },
-        { label: 'Última Atividade', value: 'Hoje, 14:30' },
-        { label: 'Sessões Ativas', value: '2 dispositivos' },
-      ]
-    }
+  const stats = [
+    { label: t('account.totalTrips'), value: '1,247', icon: DollarSign },
+    { label: t('account.totalEarnings'), value: formatCurrency(45620, currency), icon: DollarSign },
+    { label: t('account.avgRating'), value: '4.8 ⭐', icon: User },
+  ];
+
+  const quickActions = [
+    { label: t('account.viewEarnings'), icon: DollarSign },
+    { label: t('account.downloadReports'), icon: FileText },
+    { label: t('account.contactSupport'), icon: MessageCircle },
   ];
 
   return (
     <div className="space-y-6">
       <div className="text-center py-4">
         <h2 className="text-2xl font-orbitron font-bold text-gradient mb-2">
-          Minha Conta
+          {t('account.title')}
         </h2>
-        <p className="text-muted-foreground">
-          Configurações e informações do perfil
-        </p>
+        <p className="text-muted-foreground">{t('account.profile')}</p>
       </div>
 
-      {/* Profile Header */}
+      {/* Profile Card */}
       <Card className="bg-gradient-card border-border shadow-card">
         <CardContent className="pt-6">
           <div className="flex items-center gap-6">
@@ -81,23 +68,19 @@ export function Account() {
               <User className="h-12 w-12 text-primary-foreground" />
             </div>
             <div className="flex-1">
-              <h3 className="text-2xl font-orbitron font-bold mb-1">
-                {profile.name}
-              </h3>
-              <p className="text-muted-foreground mb-2">Piloto • {currentTeam?.name}</p>
+              <h3 className="text-2xl font-orbitron font-bold mb-1">{profile.name}</h3>
+              <p className="text-muted-foreground mb-2">{currentTeam?.name}</p>
               <div className="flex gap-2">
                 <Button 
                   variant="outline" 
                   size="sm"
                   onClick={() => setIsEditing(!isEditing)}
                 >
-                  <Edit className="h-4 w-4 mr-2" />
-                  {isEditing ? 'Cancelar' : 'Editar Perfil'}
+                  {isEditing ? t('account.cancel') : t('account.edit')}
                 </Button>
                 {isEditing && (
                   <Button size="sm" onClick={handleSave}>
-                    <Shield className="h-4 w-4 mr-2" />
-                    Guardar
+                    {t('account.save')}
                   </Button>
                 )}
               </div>
@@ -106,45 +89,41 @@ export function Account() {
         </CardContent>
       </Card>
 
-      {/* Editable Profile Fields */}
+      {/* Edit Form */}
       {isEditing && (
         <Card className="bg-gradient-card border-border shadow-card">
           <CardHeader>
-            <CardTitle className="font-orbitron">Editar Informações</CardTitle>
+            <CardTitle className="font-orbitron">{t('account.edit')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Nome</Label>
+                <Label>{t('account.name')}</Label>
                 <Input 
-                  id="name"
                   value={profile.name}
                   onChange={(e) => setProfile({ ...profile, name: e.target.value })}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label>{t('account.email')}</Label>
                 <Input 
-                  id="email"
                   type="email"
                   value={profile.email}
                   onChange={(e) => setProfile({ ...profile, email: e.target.value })}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="phone">Telefone</Label>
+                <Label>{t('account.phone')}</Label>
                 <Input 
-                  id="phone"
                   value={profile.phone}
                   onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="license">Licença</Label>
+                <Label>{t('account.license')}</Label>
                 <Input 
-                  id="license"
                   value={profile.license}
-                  disabled
+                  onChange={(e) => setProfile({ ...profile, license: e.target.value })}
                 />
               </div>
             </div>
@@ -152,27 +131,19 @@ export function Account() {
         </Card>
       )}
 
-      {/* Account Sections */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {accountSections.map((section, index) => {
-          const Icon = section.icon;
-          
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {stats.map((stat, index) => {
+          const Icon = stat.icon;
           return (
             <Card key={index} className="bg-gradient-card border-border shadow-card">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 font-orbitron">
-                  <Icon className="h-5 w-5 text-primary" />
-                  {section.title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {section.items.map((item, itemIndex) => (
-                    <div key={itemIndex} className="flex justify-between items-center p-2 hover:bg-muted/20 rounded transition-racing">
-                      <span className="text-muted-foreground">{item.label}</span>
-                      <span className="font-medium text-foreground">{item.value}</span>
-                    </div>
-                  ))}
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">{stat.label}</p>
+                    <p className="text-2xl font-orbitron font-bold">{stat.value}</p>
+                  </div>
+                  <Icon className="h-8 w-8 text-primary" />
                 </div>
               </CardContent>
             </Card>
@@ -180,54 +151,85 @@ export function Account() {
         })}
       </div>
 
-      {/* Quick Actions */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {[
-          { label: 'Pagamentos', icon: CreditCard, variant: 'outline' as const },
-          { label: 'Suporte', icon: User, variant: 'outline' as const },
-          { label: 'Backup', icon: Shield, variant: 'outline' as const },
-          { label: 'Sair', icon: LogOut, variant: 'destructive' as const },
-        ].map((action, index) => {
-          const ActionIcon = action.icon;
-          
-          return (
-            <Button
-              key={index}
-              variant={action.variant}
-              className="h-16 flex-col gap-2"
-            >
-              <ActionIcon className="h-5 w-5" />
-              <span className="text-xs">{action.label}</span>
-            </Button>
-          );
-        })}
-      </div>
-
-      {/* Statistics */}
+      {/* Settings */}
       <Card className="bg-gradient-card border-border shadow-card">
         <CardHeader>
-          <CardTitle className="font-orbitron">Estatísticas da Conta</CardTitle>
+          <CardTitle className="flex items-center gap-2 font-orbitron">
+            <Settings className="h-5 w-5" />
+            {t('account.settings')}
+          </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { label: 'Dias Ativos', value: '127' },
-              { label: 'Logins Totais', value: '342' },
-              { label: 'Widgets Usados', value: '6/6' },
-              { label: 'Equipes Testadas', value: '6' },
-            ].map((stat, index) => (
-              <div key={index} className="text-center p-3 bg-muted/10 rounded-lg border border-border">
-                <div className="text-2xl font-orbitron font-bold text-primary mb-1">
-                  {stat.value}
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  {stat.label}
-                </div>
-              </div>
-            ))}
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-medium">{t('account.notifications')}</p>
+              <p className="text-sm text-muted-foreground">{t('account.notificationsDesc')}</p>
+            </div>
+            <Switch 
+              checked={settings.notifications}
+              onCheckedChange={(checked) => setSettings({ ...settings, notifications: checked })}
+            />
+          </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-medium">{t('account.darkMode')}</p>
+              <p className="text-sm text-muted-foreground">{t('account.darkModeDesc')}</p>
+            </div>
+            <Switch 
+              checked={settings.darkMode}
+              onCheckedChange={(checked) => setSettings({ ...settings, darkMode: checked })}
+            />
+          </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-medium">{t('account.autoAccept')}</p>
+              <p className="text-sm text-muted-foreground">{t('account.autoAcceptDesc')}</p>
+            </div>
+            <Switch 
+              checked={settings.autoAccept}
+              onCheckedChange={(checked) => setSettings({ ...settings, autoAccept: checked })}
+            />
           </div>
         </CardContent>
       </Card>
+
+      {/* Security */}
+      <Card className="bg-gradient-card border-border shadow-card">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 font-orbitron">
+            <Shield className="h-5 w-5" />
+            {t('account.security')}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <Button variant="outline" className="w-full justify-start">
+            {t('account.changePassword')}
+          </Button>
+          <Button variant="outline" className="w-full justify-start">
+            {t('account.twoFactor')}
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* Quick Actions */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {quickActions.map((action, index) => {
+          const Icon = action.icon;
+          return (
+            <Card 
+              key={index}
+              className="bg-gradient-card border-border shadow-card hover:shadow-racing transition-racing cursor-pointer group"
+            >
+              <CardContent className="p-4 text-center">
+                <div className="h-12 w-12 bg-gradient-racing rounded-lg mx-auto mb-2 flex items-center justify-center group-hover:shadow-glow transition-racing">
+                  <Icon className="h-6 w-6 text-primary-foreground" />
+                </div>
+                <p className="font-medium text-sm">{action.label}</p>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
     </div>
   );
 }

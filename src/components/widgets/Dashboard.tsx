@@ -1,84 +1,77 @@
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { TrendingUp, DollarSign, Users, MapPin, Clock, Zap } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAppStore } from '@/store/useAppStore';
 import { F1_TEAMS } from '@/data/teams';
 import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { formatCurrency } from '@/lib/currency';
 
 export function Dashboard() {
-  const { selectedTeam } = useAppStore();
+  const { selectedTeam, currency } = useAppStore();
+  const { t } = useTranslation();
   const currentTeam = F1_TEAMS.find(team => team.id === selectedTeam);
 
-  // Dados de performance semanal
   const weeklyData = useMemo(() => [
-    { day: 'Seg', receita: 2400, viagens: 38, eficiencia: 92 },
-    { day: 'Ter', receita: 2847, viagens: 42, eficiencia: 94 },
-    { day: 'Qua', receita: 2650, viagens: 40, eficiencia: 91 },
-    { day: 'Qui', receita: 3100, viagens: 47, eficiencia: 96 },
-    { day: 'Sex', receita: 3450, viagens: 52, eficiencia: 95 },
-    { day: 'Sáb', receita: 4200, viagens: 61, eficiencia: 97 },
-    { day: 'Dom', receita: 3800, viagens: 55, eficiencia: 93 },
+    { day: 'Mon', receita: 2400, viagens: 38, eficiencia: 92 },
+    { day: 'Tue', receita: 2847, viagens: 42, eficiencia: 94 },
+    { day: 'Wed', receita: 2650, viagens: 40, eficiencia: 91 },
+    { day: 'Thu', receita: 3100, viagens: 47, eficiencia: 96 },
+    { day: 'Fri', receita: 3450, viagens: 52, eficiencia: 95 },
+    { day: 'Sat', receita: 4200, viagens: 61, eficiencia: 97 },
+    { day: 'Sun', receita: 3800, viagens: 55, eficiencia: 93 },
   ], []);
 
-  const metrics = [
+  const metrics = useMemo(() => [
     {
-      title: 'Receita Diária',
-      value: 'R$ 2.847',
+      title: t('dashboard.revenue'),
+      value: formatCurrency(2847, currency),
       change: '+12.5%',
       icon: DollarSign,
       color: 'text-green-500',
     },
     {
-      title: 'Viagens Ativas',
+      title: t('dashboard.trips'),
       value: '47',
       change: '+8.2%',
       icon: Users,
       color: 'text-blue-500',
     },
     {
-      title: 'Zona Quente',
-      value: 'Centro',
-      change: 'Aeroporto em 2h',
-      icon: MapPin,
-      color: 'text-orange-500',
-    },
-    {
-      title: 'Tempo Médio',
-      value: '18 min',
-      change: '-3.1 min',
-      icon: Clock,
-      color: 'text-purple-500',
-    },
-    {
-      title: 'Eficiência',
+      title: t('dashboard.efficiency'),
       value: '94.3%',
       change: '+2.1%',
       icon: Zap,
       color: 'text-yellow-500',
     },
     {
-      title: 'Crescimento',
-      value: '156%',
-      change: 'vs mês anterior',
+      title: t('dashboard.rating'),
+      value: '4.8',
+      change: '+0.2',
       icon: TrendingUp,
       color: 'text-primary',
     },
+  ], [t, currency]);
+
+  const quickActions = [
+    { label: t('dashboard.startShift'), icon: Zap },
+    { label: t('dashboard.viewRoutes'), icon: MapPin },
+    { label: t('dashboard.viewHistory'), icon: Clock },
+    { label: t('dashboard.settings'), icon: Users },
   ];
 
   return (
     <div className="space-y-6">
-      {/* Welcome Section */}
       <div className="text-center py-8">
         <h2 className="text-3xl font-orbitron font-bold text-gradient mb-2">
-          Bem-vindo ao DriverPro Analytics
+          {t('dashboard.welcome')}
         </h2>
         <p className="text-muted-foreground">
-          Piloto {currentTeam?.displayName} • Dashboard em tempo real
+          {currentTeam?.displayName}
         </p>
       </div>
 
-      {/* Metrics Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {metrics.map((metric, index) => {
           const Icon = metric.icon;
           
@@ -106,11 +99,10 @@ export function Dashboard() {
         })}
       </div>
 
-      {/* Performance Chart */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="bg-gradient-card border-border shadow-card">
           <CardHeader>
-            <CardTitle className="font-orbitron">Receita Semanal</CardTitle>
+            <CardTitle className="font-orbitron">{t('dashboard.weeklyRevenue')}</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={250}>
@@ -132,6 +124,7 @@ export function Dashboard() {
                     borderRadius: '8px',
                     color: 'hsl(var(--foreground))'
                   }}
+                  formatter={(value: number) => formatCurrency(value, currency)}
                 />
                 <Area 
                   type="monotone" 
@@ -147,7 +140,7 @@ export function Dashboard() {
 
         <Card className="bg-gradient-card border-border shadow-card">
           <CardHeader>
-            <CardTitle className="font-orbitron">Eficiência & Viagens</CardTitle>
+            <CardTitle className="font-orbitron">{t('dashboard.weeklyTrips')}</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={250}>
@@ -175,14 +168,12 @@ export function Dashboard() {
                   dataKey="viagens" 
                   stroke="hsl(var(--accent))" 
                   strokeWidth={2}
-                  name="Viagens"
                 />
                 <Line 
                   type="monotone" 
                   dataKey="eficiencia" 
                   stroke="hsl(var(--primary))" 
                   strokeWidth={2}
-                  name="Eficiência %"
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -190,21 +181,23 @@ export function Dashboard() {
         </Card>
       </div>
 
-      {/* Quick Actions */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {['Iniciar Turno', 'Ver Rotas', 'Relatórios', 'Configurações'].map((action, index) => (
-          <Card 
-            key={index}
-            className="bg-gradient-card border-border shadow-card hover:shadow-racing transition-racing cursor-pointer group"
-          >
-            <CardContent className="p-4 text-center">
-              <div className="h-12 w-12 bg-gradient-racing rounded-lg mx-auto mb-2 flex items-center justify-center group-hover:shadow-glow transition-racing">
-                <Zap className="h-6 w-6 text-primary-foreground" />
-              </div>
-              <p className="font-medium text-sm">{action}</p>
-            </CardContent>
-          </Card>
-        ))}
+        {quickActions.map((action, index) => {
+          const Icon = action.icon;
+          return (
+            <Card 
+              key={index}
+              className="bg-gradient-card border-border shadow-card hover:shadow-racing transition-racing cursor-pointer group"
+            >
+              <CardContent className="p-4 text-center">
+                <div className="h-12 w-12 bg-gradient-racing rounded-lg mx-auto mb-2 flex items-center justify-center group-hover:shadow-glow transition-racing">
+                  <Icon className="h-6 w-6 text-primary-foreground" />
+                </div>
+                <p className="font-medium text-sm">{action.label}</p>
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
     </div>
   );

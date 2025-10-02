@@ -2,13 +2,20 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { AppState, F1Team, WidgetType, ChatMessage } from '@/types';
 
+export type Language = 'pt' | 'en' | 'es';
+export type Currency = 'EUR' | 'USD' | 'GBP';
+
 interface AppStore extends AppState {
+  language: Language;
+  currency: Currency;
   setSelectedTeam: (team: F1Team) => void;
   setActiveWidget: (widget: WidgetType) => void;
   addChatMessage: (message: Omit<ChatMessage, 'id' | 'timestamp'>) => void;
   toggleProfileSelection: () => void;
   toggleChat: () => void;
   setChatOpen: (open: boolean) => void;
+  setLanguage: (language: Language) => void;
+  setCurrency: (currency: Currency) => void;
 }
 
 export const useAppStore = create<AppStore>()(
@@ -16,6 +23,8 @@ export const useAppStore = create<AppStore>()(
     (set, get) => ({
       selectedTeam: 'ferrari',
       activeWidget: 'dashboard',
+      language: 'pt',
+      currency: 'EUR',
       chatHistory: {
         dashboard: [],
         analytics: [],
@@ -55,6 +64,8 @@ export const useAppStore = create<AppStore>()(
       toggleProfileSelection: () => set((state) => ({ isProfileSelectionOpen: !state.isProfileSelectionOpen })),
       toggleChat: () => set((state) => ({ isChatOpen: !state.isChatOpen })),
       setChatOpen: (open) => set({ isChatOpen: open }),
+      setLanguage: (language) => set({ language }),
+      setCurrency: (currency) => set({ currency }),
     }),
     {
       name: 'driverpro-storage',
@@ -62,6 +73,8 @@ export const useAppStore = create<AppStore>()(
         selectedTeam: state.selectedTeam,
         activeWidget: state.activeWidget,
         chatHistory: state.chatHistory,
+        language: state.language,
+        currency: state.currency,
       }),
     }
   )

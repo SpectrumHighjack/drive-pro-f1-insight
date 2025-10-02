@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { MessageCircle, Send, X, Bot } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -17,6 +18,7 @@ export function ChatBot() {
     addChatMessage 
   } = useAppStore();
   
+  const { t } = useTranslation();
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -93,7 +95,7 @@ export function ChatBot() {
                   <Bot className="h-5 w-5 text-primary-foreground" />
                 </div>
                 <div>
-                  <h3 className="font-orbitron font-bold text-lg">Sophia</h3>
+                  <h3 className="font-orbitron font-bold text-lg">{t('chat.title')}</h3>
                   <p className="text-xs text-muted-foreground">
                     Assistente IA • Widget: {activeWidget}
                   </p>
@@ -164,7 +166,7 @@ export function ChatBot() {
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Digite sua mensagem..."
+                  placeholder={t('chat.placeholder')}
                   className="flex-1 bg-muted border-border"
                   disabled={isLoading}
                 />
