@@ -1,34 +1,77 @@
-import React from 'react';
-import { Newspaper, Car, Plane, Construction } from 'lucide-react';
+import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Newspaper, Car, Plane, Construction, MapPin } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useAppStore } from '@/store/useAppStore';
 
-export function TrafficNews() {
-  const mockNews = [
+const newsByLocation: Record<string, any[]> = {
+  'Lisboa': [
     {
-      title: 'Obra na Av. Faria Lima causa congestionamento até sexta-feira',
-      summary: 'Interdição parcial entre 8h e 18h. Rotas alternativas pela Rebouças.',
+      title: 'Obra na Av. da Liberdade causa congestionamento',
+      summary: 'Interdição parcial entre 8h e 18h. Rotas alternativas pelo Marquês de Pombal.',
       time: '2h atrás',
       category: 'Obras',
       icon: Construction,
       severity: 'high'
     },
     {
-      title: 'Aeroporto de Congonhas registra atrasos devido ao clima',
-      summary: 'Voos com atraso médio de 45 minutos. Pista secundária em manutenção.',
+      title: 'Aeroporto de Lisboa com movimento intenso',
+      summary: 'Período de férias aumenta demanda. Chegue com antecedência.',
       time: '4h atrás',
       category: 'Aeroporto',
       icon: Plane,
       severity: 'medium'
     },
+  ],
+  'Porto': [
     {
-      title: 'Protesto de motoristas de aplicativo na região central',
-      summary: 'Manifestação pacífica até 16h. Trânsito lento na Av. Paulista.',
-      time: '6h atrás',
+      title: 'Obras na Ponte da Arrábida até fim do mês',
+      summary: 'Trânsito desviado para Ponte do Infante. Delays esperados.',
+      time: '1h atrás',
+      category: 'Obras',
+      icon: Construction,
+      severity: 'high'
+    },
+  ],
+  'Madrid': [
+    {
+      title: 'Manifestación en Sol afecta el tráfico',
+      summary: 'Cortes de calles entre 10h y 14h. Usa transporte público.',
+      time: '3h atrás',
       category: 'Trânsito',
       icon: Car,
-      severity: 'low'
-    }
-  ];
+      severity: 'high'
+    },
+  ],
+  'New York': [
+    {
+      title: 'Heavy delays on FDR Drive due to construction',
+      summary: 'Expect delays through weekend. Consider alternate routes.',
+      time: '1h ago',
+      category: 'Construction',
+      icon: Construction,
+      severity: 'high'
+    },
+  ],
+  'London': [
+    {
+      title: 'Tube strike affecting central London',
+      summary: 'Limited service on several lines. Plan ahead.',
+      time: '2h ago',
+      category: 'Transport',
+      icon: Car,
+      severity: 'high'
+    },
+  ],
+};
+
+export function TrafficNews() {
+  const { t } = useTranslation();
+  const { selectedLocation } = useAppStore();
+  
+  const mockNews = useMemo(() => {
+    return newsByLocation[selectedLocation.city] || newsByLocation['Lisboa'];
+  }, [selectedLocation.city]);
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
@@ -43,10 +86,11 @@ export function TrafficNews() {
     <div className="space-y-6">
       <div className="text-center py-4">
         <h2 className="text-2xl font-orbitron font-bold text-gradient mb-2">
-          Trânsito & Notícias
+          {t('trafficNews.title')}
         </h2>
-        <p className="text-muted-foreground">
-          Informações em tempo real filtradas por localização
+        <p className="text-muted-foreground flex items-center justify-center gap-2">
+          <MapPin className="h-4 w-4" />
+          {selectedLocation.city}, {selectedLocation.country}
         </p>
       </div>
 

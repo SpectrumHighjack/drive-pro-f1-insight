@@ -37,6 +37,9 @@
   },
   "heatmap": {
     "title": "Heat Map - Demand",
+    "selectLocation": "Select Location",
+    "country": "Country",
+    "city": "City",
     "highDemand": "High Demand",
     "mediumDemand": "Medium Demand",
     "lowDemand": "Low Demand",

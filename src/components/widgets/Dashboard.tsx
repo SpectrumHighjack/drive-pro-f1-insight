@@ -8,7 +8,7 @@ import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
 import { formatCurrency } from '@/lib/currency';
 
 export function Dashboard() {
-  const { selectedTeam, currency } = useAppStore();
+  const { selectedTeam, currency, selectedLocation } = useAppStore();
   const { t } = useTranslation();
   const currentTeam = F1_TEAMS.find(team => team.id === selectedTeam);
 
@@ -67,7 +67,7 @@ export function Dashboard() {
           {t('dashboard.welcome')}
         </h2>
         <p className="text-muted-foreground">
-          {currentTeam?.displayName}
+          {selectedLocation.city}, {selectedLocation.country} • {currentTeam?.displayName}
         </p>
       </div>
 

@@ -5,9 +5,16 @@ import { AppState, F1Team, WidgetType, ChatMessage } from '@/types';
 export type Language = 'pt' | 'en' | 'es';
 export type Currency = 'EUR' | 'USD' | 'GBP';
 
+export interface Location {
+  country: string;
+  city: string;
+  countryCode: string;
+}
+
 interface AppStore extends AppState {
   language: Language;
   currency: Currency;
+  selectedLocation: Location;
   setSelectedTeam: (team: F1Team) => void;
   setActiveWidget: (widget: WidgetType) => void;
   addChatMessage: (message: Omit<ChatMessage, 'id' | 'timestamp'>) => void;
@@ -16,6 +23,7 @@ interface AppStore extends AppState {
   setChatOpen: (open: boolean) => void;
   setLanguage: (language: Language) => void;
   setCurrency: (currency: Currency) => void;
+  setSelectedLocation: (location: Location) => void;
 }
 
 export const useAppStore = create<AppStore>()(
@@ -25,6 +33,11 @@ export const useAppStore = create<AppStore>()(
       activeWidget: 'dashboard',
       language: 'pt',
       currency: 'EUR',
+      selectedLocation: {
+        country: 'Portugal',
+        city: 'Lisboa',
+        countryCode: 'PT',
+      },
       chatHistory: {
         dashboard: [],
         analytics: [],
@@ -66,6 +79,7 @@ export const useAppStore = create<AppStore>()(
       setChatOpen: (open) => set({ isChatOpen: open }),
       setLanguage: (language) => set({ language }),
       setCurrency: (currency) => set({ currency }),
+      setSelectedLocation: (location) => set({ selectedLocation: location }),
     }),
     {
       name: 'driverpro-storage',
@@ -75,6 +89,7 @@ export const useAppStore = create<AppStore>()(
         chatHistory: state.chatHistory,
         language: state.language,
         currency: state.currency,
+        selectedLocation: state.selectedLocation,
       }),
     }
   )

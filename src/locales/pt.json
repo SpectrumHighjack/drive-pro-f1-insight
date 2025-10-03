@@ -37,6 +37,9 @@
   },
   "heatmap": {
     "title": "Mapa de Calor - Demanda",
+    "selectLocation": "Selecionar Localização",
+    "country": "País",
+    "city": "Cidade",
     "highDemand": "Alta Demanda",
     "mediumDemand": "Média Demanda",
     "lowDemand": "Baixa Demanda",
