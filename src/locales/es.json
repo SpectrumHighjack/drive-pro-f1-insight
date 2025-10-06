@@ -125,6 +125,7 @@
     "title": "Chat con Sophia",
     "placeholder": "Pregunta sobre tus métricas, rutas o consejos...",
     "send": "Enviar",
-    "openButton": "Abrir chat con asistente"
+    "openButton": "Abrir chat con asistente",
+    "close": "Cerrar chat"
   }
 }

@@ -106,6 +106,7 @@ export function ChatBot() {
                 size="icon"
                 onClick={() => setChatOpen(false)}
                 className="hover:bg-destructive/20"
+                aria-label={t('chat.close')}
               >
                 <X className="h-5 w-5" />
               </Button>
@@ -175,6 +176,7 @@ export function ChatBot() {
                   disabled={!inputMessage.trim() || isLoading}
                   variant="default"
                   size="icon"
+                  aria-label={t('chat.send')}
                 >
                   <Send className="h-4 w-4" />
                 </Button>

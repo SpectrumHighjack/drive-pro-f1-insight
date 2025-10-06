@@ -125,6 +125,7 @@
     "title": "Chat with Sophia",
     "placeholder": "Ask about your metrics, routes or tips...",
     "send": "Send",
-    "openButton": "Open assistant chat"
+    "openButton": "Open assistant chat",
+    "close": "Close chat"
   }
 }
