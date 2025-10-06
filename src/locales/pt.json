@@ -6,7 +6,8 @@
     "heatmap": "Mapa de Calor",
     "trafficNews": "Trânsito & Notícias",
     "businessPlan": "Plano de Negócio",
-    "account": "Conta"
+    "account": "Conta",
+    "profileButton": "Selecionar perfil"
   },
   "dashboard": {
     "welcome": "Bem-vindo de volta",
@@ -123,6 +124,7 @@
   "chat": {
     "title": "Chat com Sophia",
     "placeholder": "Pergunte sobre suas métricas, rotas ou dicas...",
-    "send": "Enviar"
+    "send": "Enviar",
+    "openButton": "Abrir chat com assistente"
   }
 }

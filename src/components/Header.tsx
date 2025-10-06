@@ -158,6 +158,7 @@ export function Header() {
             size="icon"
             onClick={toggleProfileSelection}
             className="hover:bg-primary/10 transition-racing"
+            aria-label={t('header.profileButton')}
           >
             <Users className="h-5 w-5" />
           </Button>

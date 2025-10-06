@@ -189,6 +189,7 @@ export function ChatBot() {
         onClick={toggleChat}
         size="icon"
         className="fixed bottom-6 right-6 z-30 h-14 w-14 rounded-full bg-gradient-racing shadow-glow hover:scale-110 transition-all"
+        aria-label={t('chat.openButton')}
       >
         <MessageCircle className="h-6 w-6" />
       </Button>
