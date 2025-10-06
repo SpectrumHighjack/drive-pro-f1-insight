@@ -110,7 +110,7 @@ export function HeatMap() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 font-orbitron">
             <Navigation className="h-5 w-5 text-primary" />
-            Mapa Interativo
+            {t('heatmap.interactiveMap')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -124,7 +124,7 @@ export function HeatMap() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 font-orbitron text-lg">
               <MapPin className="h-5 w-5 text-red-500" />
-              Zona Crítica
+              {t('heatmap.criticalZone')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -140,7 +140,7 @@ export function HeatMap() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 font-orbitron text-lg">
               <AlertTriangle className="h-5 w-5 text-yellow-500" />
-              Incidentes
+              {t('heatmap.incidents')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -156,7 +156,7 @@ export function HeatMap() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 font-orbitron text-lg">
               <Navigation className="h-5 w-5 text-blue-500" />
-              Rotas Otimizadas
+              {t('heatmap.optimizedRoutes')}
             </CardTitle>
           </CardHeader>
           <CardContent>

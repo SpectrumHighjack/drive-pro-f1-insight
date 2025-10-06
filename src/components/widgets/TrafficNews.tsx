@@ -140,7 +140,7 @@ export function TrafficNews() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 font-orbitron">
             <Car className="h-5 w-5 text-primary" />
-            Status do Trânsito
+            {t('trafficNews.trafficStatus')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -168,9 +168,9 @@ export function TrafficNews() {
           <div className="flex items-center justify-between text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <Newspaper className="h-4 w-4" />
-              <span>Fonte: Google News API</span>
+              <span>{t('trafficNews.source')}: Google News API</span>
             </div>
-            <span>Atualizado automaticamente a cada 15 minutos</span>
+            <span>{t('trafficNews.updateFrequency')}</span>
           </div>
         </CardContent>
       </Card>
