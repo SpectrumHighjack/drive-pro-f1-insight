@@ -2,12 +2,13 @@ import React from 'react';
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { useAppStore } from '@/store/useAppStore';
 import { F1_TEAMS } from '@/data/teams';
 import { F1Team } from '@/types';
 
 export function ProfileSelector() {
-  const { isProfileSelectionOpen, selectedTeam, setSelectedTeam, toggleProfileSelection } = useAppStore();
+  const { isProfileSelectionOpen, selectedTeam, avatarUrl, setSelectedTeam, toggleProfileSelection } = useAppStore();
 
   if (!isProfileSelectionOpen) return null;
 
@@ -51,20 +52,27 @@ export function ProfileSelector() {
                   `}
                   onClick={() => handleTeamSelect(team.id)}
                 >
-                  {/* Helmet Icon Placeholder */}
-                  <div 
+                  {/* Avatar / Helmet Icon */}
+                  <Avatar 
                     className={`
-                      w-20 h-20 mx-auto mb-4 rounded-full shadow-racing
-                      flex items-center justify-center text-2xl font-bold
+                      w-20 h-20 mx-auto mb-4 shadow-racing border-2
                       transition-racing
-                      ${isSelected ? 'shadow-glow scale-110' : ''}
+                      ${isSelected ? 'shadow-glow scale-110 border-primary' : 'border-transparent'}
                     `}
-                    style={{
-                      background: `linear-gradient(135deg, hsl(${team.colors.primary}), hsl(${team.colors.accent}))`
-                    }}
                   >
-                    🏎️
-                  </div>
+                    {avatarUrl && isSelected ? (
+                      <AvatarImage src={avatarUrl} alt={team.displayName} />
+                    ) : (
+                      <AvatarFallback 
+                        className="text-2xl font-bold"
+                        style={{
+                          background: `linear-gradient(135deg, hsl(${team.colors.primary}), hsl(${team.colors.accent}))`
+                        }}
+                      >
+                        🏎️
+                      </AvatarFallback>
+                    )}
+                  </Avatar>
                   
                   <h3 className="font-orbitron font-bold text-lg mb-2">
                     {team.displayName}

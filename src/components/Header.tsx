@@ -2,6 +2,7 @@ import React from 'react';
 import { ChevronDown, Users, Globe, DollarSign } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,7 +19,8 @@ export function Header() {
     selectedTeam, 
     activeWidget, 
     language, 
-    currency, 
+    currency,
+    avatarUrl,
     setActiveWidget, 
     setLanguage, 
     setCurrency, 
@@ -157,10 +159,18 @@ export function Header() {
             variant="ghost"
             size="icon"
             onClick={toggleProfileSelection}
-            className="hover:bg-primary/10 transition-racing"
+            className="hover:bg-primary/10 transition-racing p-1"
             aria-label={t('header.profileButton')}
           >
-            <Users className="h-5 w-5" />
+            <Avatar className="h-8 w-8">
+              {avatarUrl ? (
+                <AvatarImage src={avatarUrl} alt="Profile" />
+              ) : (
+                <AvatarFallback className="bg-gradient-racing">
+                  <Users className="h-4 w-4 text-primary-foreground" />
+                </AvatarFallback>
+              )}
+            </Avatar>
           </Button>
         </div>
       </div>
