@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { MessageCircle, Send, X, Bot } from 'lucide-react';
+import { MessageCircle, Send, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -91,8 +91,8 @@ export function ChatBot() {
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-border">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 bg-gradient-racing rounded-full flex items-center justify-center shadow-glow">
-                  <Bot className="h-5 w-5 text-primary-foreground" />
+                <div className="h-10 w-10 bg-gradient-racing rounded-full flex items-center justify-center shadow-glow overflow-hidden">
+                  <img src="/sophia-avatar.jpg" alt="Sophia" className="h-full w-full object-cover" />
                 </div>
                 <div>
                   <h3 className="font-orbitron font-bold text-lg">{t('chat.title')}</h3>
@@ -117,7 +117,7 @@ export function ChatBot() {
               <div className="space-y-4">
                 {currentHistory.length === 0 && (
                   <div className="text-center py-8">
-                    <Bot className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+                    <img src="/sophia-avatar.jpg" alt="Sophia" className="h-12 w-12 rounded-full object-cover mx-auto mb-3" />
                     <p className="text-muted-foreground">
                       Olá! Sou a Sophia, sua assistente DriverPro.
                       <br />
