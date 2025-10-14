@@ -12,6 +12,26 @@ import { useAppStore } from '@/store/useAppStore';
 import { F1_TEAMS } from '@/data/teams';
 import { formatCurrency } from '@/lib/currency';
 import { supabase } from '@/integrations/supabase/client';
+import { z } from 'zod';
+
+// Validation schema for profile fields
+const profileSchema = z.object({
+  name: z.string()
+    .trim()
+    .min(1, 'Name is required')
+    .max(100, 'Name must be less than 100 characters'),
+  email: z.string()
+    .trim()
+    .email('Invalid email format')
+    .max(255, 'Email must be less than 255 characters'),
+  phone: z.string()
+    .trim()
+    .regex(/^\+?[0-9\s\-()]{9,20}$/, 'Invalid phone number format'),
+  license: z.string()
+    .trim()
+    .min(5, 'License must be at least 5 characters')
+    .max(50, 'License must be less than 50 characters'),
+});
 
 export function Account() {
   const { selectedTeam, currency, avatarUrl, setAvatarUrl } = useAppStore();
@@ -36,6 +56,19 @@ export function Account() {
   });
 
   const handleSave = () => {
+    // Validate profile data before saving
+    const result = profileSchema.safeParse(profile);
+    
+    if (!result.success) {
+      const firstError = result.error.errors[0];
+      toast({
+        title: 'Validation error',
+        description: firstError.message,
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setIsEditing(false);
     toast({
       title: t('account.saved'),
@@ -95,7 +128,8 @@ export function Account() {
         description: 'Your profile picture has been updated',
       });
     } catch (error) {
-      console.error('Error uploading avatar:', error);
+      // Log sanitized error without exposing sensitive details
+      console.error('Avatar upload failed');
       toast({
         title: 'Upload failed',
         description: 'Failed to upload avatar. Please try again.',
