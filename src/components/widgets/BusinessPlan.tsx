@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Calculator, Download, Save, FileSpreadsheet } from 'lucide-react';
 import jsPDF from 'jspdf';
+import { z } from 'zod';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,6 +10,35 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useAppStore } from '@/store/useAppStore';
 import { formatCurrency, CURRENCY_SYMBOLS } from '@/lib/currency';
+
+const businessPlanSchema = z.object({
+  avgTripValue: z.number()
+    .min(1, 'Trip value must be at least 1')
+    .max(1000, 'Trip value seems unrealistically high'),
+  tripsPerDay: z.number()
+    .int('Must be a whole number')
+    .min(1, 'At least 1 trip per day')
+    .max(100, 'More than 100 trips/day is unrealistic'),
+  workDaysPerMonth: z.number()
+    .int('Must be a whole number')
+    .min(1, 'At least 1 work day')
+    .max(31, 'Cannot exceed 31 days'),
+  fuelCostPerKm: z.number()
+    .min(0.01, 'Fuel cost must be positive')
+    .max(5, 'Fuel cost seems unrealistically high'),
+  avgKmPerTrip: z.number()
+    .min(0.1, 'Distance must be positive')
+    .max(1000, 'Trip distance seems unrealistic'),
+  maintenanceCost: z.number()
+    .min(0, 'Cost cannot be negative')
+    .max(10000, 'Cost seems unrealistically high'),
+  insuranceCost: z.number()
+    .min(0, 'Cost cannot be negative')
+    .max(10000, 'Cost seems unrealistically high'),
+  otherCosts: z.number()
+    .min(0, 'Cost cannot be negative')
+    .max(10000, 'Cost seems unrealistically high'),
+});
 
 export function BusinessPlan() {
   const { toast } = useToast();
@@ -56,7 +86,23 @@ export function BusinessPlan() {
   calculations.netMonthlyIncome = calculations.grossMonthlyRevenue - calculations.totalMonthlyCosts;
   calculations.annualProjection = calculations.netMonthlyIncome * 12;
 
+  const validateFormData = () => {
+    const result = businessPlanSchema.safeParse(formData);
+    
+    if (!result.success) {
+      toast({
+        title: 'Invalid input',
+        description: result.error.errors[0].message,
+        variant: 'destructive',
+      });
+      return false;
+    }
+    return true;
+  };
+
   const handleSave = () => {
+    if (!validateFormData()) return;
+    
     localStorage.setItem('driverpro-business-plan', JSON.stringify(formData));
     toast({
       title: t('businessPlan.saved'),
@@ -65,6 +111,8 @@ export function BusinessPlan() {
   };
 
   const handleExportPDF = () => {
+    if (!validateFormData()) return;
+    
     const doc = new jsPDF({ unit: 'pt', format: 'a4' });
     const currSymbol = CURRENCY_SYMBOLS[currency];
 
@@ -92,6 +140,8 @@ export function BusinessPlan() {
   };
 
   const handleExportCSV = () => {
+    if (!validateFormData()) return;
+    
     const csvContent = [
       ['Metric', 'Value'],
       [t('businessPlan.tripsPerDay'), String(formData.tripsPerDay)],
@@ -130,35 +180,35 @@ export function BusinessPlan() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label>{t('businessPlan.avgTripValue')} ({CURRENCY_SYMBOLS[currency]})</Label>
-              <Input type="number" step="0.01" value={formData.avgTripValue} onChange={(e) => handleInputChange('avgTripValue', e.target.value)} />
+              <Input type="number" step="0.01" min="1" max="1000" value={formData.avgTripValue} onChange={(e) => handleInputChange('avgTripValue', e.target.value)} />
             </div>
             <div className="space-y-2">
               <Label>{t('businessPlan.tripsPerDay')}</Label>
-              <Input type="number" value={formData.tripsPerDay} onChange={(e) => handleInputChange('tripsPerDay', e.target.value)} />
+              <Input type="number" step="1" min="1" max="100" value={formData.tripsPerDay} onChange={(e) => handleInputChange('tripsPerDay', e.target.value)} />
             </div>
             <div className="space-y-2">
               <Label>{t('businessPlan.workDaysPerMonth')}</Label>
-              <Input type="number" value={formData.workDaysPerMonth} onChange={(e) => handleInputChange('workDaysPerMonth', e.target.value)} />
+              <Input type="number" step="1" min="1" max="31" value={formData.workDaysPerMonth} onChange={(e) => handleInputChange('workDaysPerMonth', e.target.value)} />
             </div>
             <div className="space-y-2">
               <Label>{t('businessPlan.fuelCostPerKm')} ({CURRENCY_SYMBOLS[currency]})</Label>
-              <Input type="number" step="0.01" value={formData.fuelCostPerKm} onChange={(e) => handleInputChange('fuelCostPerKm', e.target.value)} />
+              <Input type="number" step="0.01" min="0.01" max="5" value={formData.fuelCostPerKm} onChange={(e) => handleInputChange('fuelCostPerKm', e.target.value)} />
             </div>
             <div className="space-y-2">
               <Label>{t('businessPlan.avgKmPerTrip')}</Label>
-              <Input type="number" step="0.1" value={formData.avgKmPerTrip} onChange={(e) => handleInputChange('avgKmPerTrip', e.target.value)} />
+              <Input type="number" step="0.1" min="0.1" max="1000" value={formData.avgKmPerTrip} onChange={(e) => handleInputChange('avgKmPerTrip', e.target.value)} />
             </div>
             <div className="space-y-2">
               <Label>{t('businessPlan.maintenanceCost')} ({CURRENCY_SYMBOLS[currency]})</Label>
-              <Input type="number" value={formData.maintenanceCost} onChange={(e) => handleInputChange('maintenanceCost', e.target.value)} />
+              <Input type="number" step="1" min="0" max="10000" value={formData.maintenanceCost} onChange={(e) => handleInputChange('maintenanceCost', e.target.value)} />
             </div>
             <div className="space-y-2">
               <Label>{t('businessPlan.insuranceCost')} ({CURRENCY_SYMBOLS[currency]})</Label>
-              <Input type="number" value={formData.insuranceCost} onChange={(e) => handleInputChange('insuranceCost', e.target.value)} />
+              <Input type="number" step="1" min="0" max="10000" value={formData.insuranceCost} onChange={(e) => handleInputChange('insuranceCost', e.target.value)} />
             </div>
             <div className="space-y-2">
               <Label>{t('businessPlan.otherCosts')} ({CURRENCY_SYMBOLS[currency]})</Label>
-              <Input type="number" value={formData.otherCosts} onChange={(e) => handleInputChange('otherCosts', e.target.value)} />
+              <Input type="number" step="1" min="0" max="10000" value={formData.otherCosts} onChange={(e) => handleInputChange('otherCosts', e.target.value)} />
             </div>
           </CardContent>
         </Card>
