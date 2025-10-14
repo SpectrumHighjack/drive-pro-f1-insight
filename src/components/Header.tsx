@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronDown, Users, Globe, DollarSign } from 'lucide-react';
+import { ChevronDown, Users, Globe, DollarSign, LogOut } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -8,11 +8,14 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { useAppStore, Language, Currency } from '@/store/useAppStore';
 import { F1_TEAMS, WIDGETS } from '@/data/teams';
 import { WidgetType } from '@/types';
 import { CURRENCY_SYMBOLS } from '@/lib/currency';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 export function Header() {
   const { 
@@ -28,6 +31,7 @@ export function Header() {
   } = useAppStore();
   
   const { t, i18n } = useTranslation();
+  const { toast } = useToast();
   const currentTeam = F1_TEAMS.find(team => team.id === selectedTeam);
 
   const handleWidgetChange = (widgetId: WidgetType) => {
@@ -41,6 +45,14 @@ export function Header() {
 
   const handleCurrencyChange = (curr: Currency) => {
     setCurrency(curr);
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast({
+      title: 'Logged out',
+      description: 'Successfully logged out',
+    });
   };
 
   const languages: { code: Language; label: string }[] = [
@@ -154,24 +166,44 @@ export function Header() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* Profile Button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleProfileSelection}
-            className="hover:bg-primary/10 transition-racing p-1"
-            aria-label={t('header.profileButton')}
-          >
-            <Avatar className="h-8 w-8">
-              {avatarUrl ? (
-                <AvatarImage src={avatarUrl} alt="Profile" />
-              ) : (
-                <AvatarFallback className="bg-gradient-racing">
-                  <Users className="h-4 w-4 text-primary-foreground" />
-                </AvatarFallback>
-              )}
-            </Avatar>
-          </Button>
+          {/* Profile Button with Logout */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="hover:bg-primary/10 transition-racing p-1"
+                aria-label={t('header.profileButton')}
+              >
+                <Avatar className="h-8 w-8">
+                  {avatarUrl ? (
+                    <AvatarImage src={avatarUrl} alt="Profile" />
+                  ) : (
+                    <AvatarFallback className="bg-gradient-racing">
+                      <Users className="h-4 w-4 text-primary-foreground" />
+                    </AvatarFallback>
+                  )}
+                </Avatar>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="bg-gradient-card border-border">
+              <DropdownMenuItem
+                onClick={toggleProfileSelection}
+                className="cursor-pointer font-inter"
+              >
+                <Users className="mr-2 h-4 w-4" />
+                <span className="font-medium">Profile</span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={handleLogout}
+                className="cursor-pointer font-inter text-destructive focus:text-destructive"
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                <span className="font-medium">Logout</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </header>

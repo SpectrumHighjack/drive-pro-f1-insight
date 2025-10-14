@@ -103,15 +103,35 @@ export function Account() {
     setIsUploading(true);
 
     try {
-      // Create a unique file name
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = `${fileName}`;
+      // Get current session
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        toast({
+          title: 'Authentication required',
+          description: 'Please log in to upload an avatar',
+          variant: 'destructive',
+        });
+        return;
+      }
 
-      // Upload to Supabase Storage
-      const { error: uploadError, data } = await supabase.storage
+      // Create a unique file name with user-specific folder
+      const fileExt = file.name.split('.').pop();
+      const fileName = `avatar-${Date.now()}.${fileExt}`;
+      const filePath = `${session.user.id}/${fileName}`;
+
+      // Delete old avatar if exists
+      if (avatarUrl) {
+        const oldPath = avatarUrl.split('/avatars/')[1];
+        if (oldPath) {
+          await supabase.storage.from('avatars').remove([oldPath]);
+        }
+      }
+
+      // Upload to Supabase Storage with user folder
+      const { error: uploadError } = await supabase.storage
         .from('avatars')
-        .upload(filePath, file);
+        .upload(filePath, file, { upsert: true });
 
       if (uploadError) throw uploadError;
 
