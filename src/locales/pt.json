@@ -69,6 +69,23 @@
       "event": "Evento"
     }
   },
+  "packs": {
+    "title": "Escolha o Seu Pack",
+    "subtitle": "Selecione o plano perfeito para as suas necessidades de análise de condução",
+    "popular": "Mais Popular",
+    "perMonth": "por mês",
+    "unlimited": "Ilimitado",
+    "selectPlan": "Selecionar Plano",
+    "note": "Todos os planos incluem acesso ao painel básico e atualizações de trânsito em tempo real.",
+    "features": {
+      "trips": "Viagens por Mês",
+      "aiQueries": "Consultas AI",
+      "reports": "Relatórios Mensais",
+      "analytics": "Análise Avançada",
+      "heatmaps": "Mapas de Calor",
+      "support": "Suporte Prioritário"
+    }
+  },
   "businessPlan": {
     "title": "Plano de Negócio",
     "parameters": "Parâmetros Financeiros",

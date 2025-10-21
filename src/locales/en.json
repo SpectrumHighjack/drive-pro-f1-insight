@@ -69,6 +69,23 @@
       "event": "Event"
     }
   },
+  "packs": {
+    "title": "Choose Your Pack",
+    "subtitle": "Select the perfect plan for your driving analytics needs",
+    "popular": "Most Popular",
+    "perMonth": "per month",
+    "unlimited": "Unlimited",
+    "selectPlan": "Select Plan",
+    "note": "All plans include basic dashboard access and real-time traffic updates.",
+    "features": {
+      "trips": "Trips per Month",
+      "aiQueries": "AI Queries",
+      "reports": "Monthly Reports",
+      "analytics": "Advanced Analytics",
+      "heatmaps": "Heat Maps",
+      "support": "Priority Support"
+    }
+  },
   "businessPlan": {
     "title": "Business Plan",
     "parameters": "Financial Parameters",

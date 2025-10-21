@@ -11,7 +11,7 @@ export interface TeamProfile {
   };
 }
 
-export type WidgetType = 'dashboard' | 'analytics' | 'heatmap' | 'traffic-news' | 'business-plan' | 'account';
+export type WidgetType = 'dashboard' | 'analytics' | 'heatmap' | 'traffic-news' | 'business-plan' | 'account' | 'packs';
 
 export interface Widget {
   id: WidgetType;
@@ -25,6 +25,21 @@ export interface ChatMessage {
   role: 'user' | 'assistant';
   timestamp: Date;
   widget?: WidgetType;
+}
+
+export interface Pack {
+  id: string;
+  name: string;
+  priceEUR: number;
+  features: {
+    tripsPerMonth: number;
+    aiQueries: number;
+    reports: number;
+    analytics: boolean;
+    heatmaps: boolean;
+    prioritySupport: boolean;
+  };
+  popular?: boolean;
 }
 
 export interface AppState {

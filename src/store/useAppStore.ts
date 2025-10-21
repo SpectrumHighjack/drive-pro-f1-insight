@@ -48,6 +48,7 @@ export const useAppStore = create<AppStore>()(
         'traffic-news': [],
         'business-plan': [],
         account: [],
+        packs: [],
       },
       isProfileSelectionOpen: false,
       isChatOpen: false,

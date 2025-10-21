@@ -69,5 +69,6 @@ export const WIDGETS = [
   { id: 'heatmap', name: 'HeatMap', icon: 'Map' },
   { id: 'traffic-news', name: 'Trânsito & Notícias', icon: 'Car' },
   { id: 'business-plan', name: 'Business Plan', icon: 'Calculator' },
+  { id: 'packs', name: 'Packs', icon: 'Package' },
   { id: 'account', name: 'Conta', icon: 'User' },
 ] as const;

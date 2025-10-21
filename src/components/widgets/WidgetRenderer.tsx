@@ -5,6 +5,7 @@ import { HeatMap } from './HeatMap';
 import { TrafficNews } from './TrafficNews';
 import { BusinessPlan } from './BusinessPlan';
 import { Account } from './Account';
+import { Packs } from './Packs';
 import { useAppStore } from '@/store/useAppStore';
 
 export function WidgetRenderer() {
@@ -22,6 +23,8 @@ export function WidgetRenderer() {
         return <TrafficNews />;
       case 'business-plan':
         return <BusinessPlan />;
+      case 'packs':
+        return <Packs />;
       case 'account':
         return <Account />;
       default:
